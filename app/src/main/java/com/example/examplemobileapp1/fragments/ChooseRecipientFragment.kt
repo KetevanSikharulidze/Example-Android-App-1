@@ -34,7 +34,6 @@ class ChooseRecipientFragment : Fragment(R.layout.fragment_choose_recipient){
                     .navigate(ChooseRecipientFragmentDirections
                         .actionChooseRecipientFragmentToConfirmationFragment2(name))
             }
-        } 
-            
+        }
     }
 }

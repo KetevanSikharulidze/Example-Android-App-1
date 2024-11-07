@@ -31,13 +31,15 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     private fun buttonListeners(){
         binding.apply {
             sendMoneyBtn.setOnClickListener{
-                Navigation.findNavController(it).navigate(MainFragmentDirections.actionMainFragmentToChooseRecipientFragment())
+                Navigation.findNavController(it)
+                    .navigate(MainFragmentDirections.actionMainFragmentToChooseRecipientFragment())
             }
             viewBalanceBtn.setOnClickListener{
                 Toast.makeText(context, "coming soon", Toast.LENGTH_SHORT).show()
             }
             viewTransactionBtn.setOnClickListener{
-                Toast.makeText(context, "coming soon", Toast.LENGTH_SHORT).show()
+                Navigation.findNavController(requireView())
+                    .navigate(MainFragmentDirections.actionMainFragmentToTransactionsFragment())
             }
         }
     }

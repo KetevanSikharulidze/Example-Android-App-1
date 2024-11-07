@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/transactionImageView"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_launcher_foreground" />
+
+    <TextView
+        android:id="@+id/transactionRecipientTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="JSC &quot;Bank Of America&quot;"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/transactionDescriptionTextView"
+        app:layout_constraintStart_toEndOf="@+id/transactionImageView"
+        app:layout_constraintTop_toTopOf="@+id/transactionImageView" />
+
+    <TextView
+        android:id="@+id/transactionDescriptionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="payment"
+        app:layout_constraintBottom_toBottomOf="@+id/transactionImageView"
+        app:layout_constraintStart_toStartOf="@+id/transactionRecipientTextView"
+        app:layout_constraintTop_toBottomOf="@+id/transactionRecipientTextView" />
+
+    <TextView
+        android:id="@+id/transactionCurrencyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:fontFamily="@font/abril_fatface"
+        android:text="Gel"
+        android:textAllCaps="true"
+        android:textColor="@color/gray"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/transactionAmountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="3dp"
+        android:text="1,000"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/transactionCurrencyTextView"
+        app:layout_constraintEnd_toStartOf="@+id/transactionCurrencyTextView"
+        app:layout_constraintTop_toTopOf="@+id/transactionCurrencyTextView" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:orientation="horizontal"
+        android:background="@color/gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/transactionImageView"
+        app:layout_constraintEnd_toEndOf="@id/transactionCurrencyTextView"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

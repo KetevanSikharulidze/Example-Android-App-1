@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_mainFragment_to_chooseRecipientFragment"
             app:destination="@id/chooseRecipientFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_transactionsFragment"
+            app:destination="@id/transactionsFragment" />
     </fragment>
 
     <fragment
@@ -35,5 +38,10 @@
             app:argType="string"
             android:defaultValue="no name" />
     </fragment>
+    <fragment
+        android:id="@+id/transactionsFragment"
+        android:name="com.example.examplemobileapp1.fragments.TransactionsFragment"
+        android:label="fragment_transactions"
+        tools:layout="@layout/fragment_transactions" />
 
 </navigation>
