@@ -45,6 +45,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.buttonSendSignal.setOnClickListener {
             val signal = "CHANGE_COLOR"  // or "SOUND_ALERT"
+
+            // bluetoothManager.sendSignal(signal)  // Send the signal to the server (or other devices)
+            // Toast.makeText(this, "Signal sent: $signal", Toast.LENGTH_SHORT).show()
+            
             selectedDevice?.let { device ->
                 bluetoothManager.sendSignal(signal)
             }
