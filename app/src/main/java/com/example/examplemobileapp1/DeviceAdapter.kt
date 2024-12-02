@@ -30,6 +30,11 @@ class DeviceAdapter(private val context: Context, private val devices: MutableLi
         deviceName.text = device.name ?: "Unknown Device"
         deviceAddress.text = device.address
 
+        // Set an OnClickListener to connect to the selected device
+        view.setOnClickListener {
+            onDeviceSelected(device)  // Notify the main activity that a device was selected
+        }
+
         return view
     }
 }
