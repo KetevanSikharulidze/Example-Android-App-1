@@ -132,8 +132,14 @@ class BluetoothManager(private val context: Context) {
 
     private fun playSoundAlert() {
         // Play a siren sound or a notification sound
-        val mediaPlayer = MediaPlayer.create(this, R.raw.siren)  // Assuming you have a siren sound file
-        mediaPlayer.start()
+        mediaPlayer = MediaPlayer.create(this, R.raw.siren)
+        mediaPlayer?.start()
+        mediaPlayer?.setOnCompletionListener {
+            it.release()
+            mediaPlayer = null
+            binding.stopButton.visibility = View.GONE
+        }
+        binding.stopButton.visibility = View.VISIBLE
     }
     
     private var bluetoothServerSocket: BluetoothServerSocket? = null
