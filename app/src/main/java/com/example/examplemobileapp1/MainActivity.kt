@@ -2,14 +2,31 @@ package com.example.examplemobileapp1
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.app.Activity
+import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var bluetoothManager: BluetoothManager
+    private val REQUEST_ENABLE_BLUETOOTH = 1001
     private val REQUEST_CODE_PERMISSIONS = 1001
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-    
+
+        bluetoothManager = BluetoothManager(this)
+        // Check if the device supports Bluetooth
+        if (!bluetoothManager.isBluetoothSupported()) {
+            Toast.makeText(this, "Bluetooth is not supported on this device", Toast.LENGTH_LONG).show()
+            finish()
+        } else if (!bluetoothManager.isBluetoothEnabled()) {
+            // Request to enable Bluetooth
+            bluetoothManager.enableBluetooth(this, REQUEST_ENABLE_BLUETOOTH)
+        } else {
+            // Initialize Bluetooth
+            bluetoothManager.initializeBluetooth()
+        }
+        
         // Check permissions at runtime
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (!hasBluetoothPermissions()) {
@@ -19,6 +36,17 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             initializeBluetooth()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_ENABLE_BLUETOOTH) {
+            if (resultCode == Activity.RESULT_OK) {
+                bluetoothManager.initializeBluetooth()
+            } else {
+                Toast.makeText(this, "Bluetooth must be enabled to use this app", Toast.LENGTH_SHORT).show()
+            }
         }
     }
     
