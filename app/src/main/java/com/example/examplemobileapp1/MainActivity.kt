@@ -33,6 +33,13 @@ class MainActivity : AppCompatActivity() {
         }
         binding.deviceListView.adapter = deviceAdapter
 
+        // Request Bluetooth permissions if not already granted
+        if (!hasBluetoothPermissions()) {
+            requestBluetoothPermissions()  // Request permissions
+        } else {
+            initializeBluetooth()  // Proceed if permissions are already granted
+        }
+       
         // Set up the button click listener
         binding.startScanButton.setOnClickListener {
             bluetoothManager.startScanning()
@@ -42,6 +49,21 @@ class MainActivity : AppCompatActivity() {
                 bluetoothManager.stopScanning()
             }, 10000)  // Stop scanning after 10 seconds
         }
+
+         // Check if Bluetooth is supported and enabled
+        if (!bluetoothManager.isBluetoothSupported()) {
+            Toast.makeText(this, "Bluetooth is not supported on this device", Toast.LENGTH_LONG).show()
+            finish()
+        } else if (!bluetoothManager.isBluetoothEnabled()) {
+            // Request to enable Bluetooth
+            bluetoothManager.enableBluetooth(this, REQUEST_ENABLE_BLUETOOTH)
+        } else {
+            bluetoothManager.startAdvertising()  // Start advertising
+            bluetoothManager.startScanning()  // Start scanning for other BLE devices
+        }
+
+        // Initialize Bluetooth (you can call this in onCreate if needed)
+        bluetoothManager.initializeBluetooth()
 
         binding.buttonSendSignal.setOnClickListener {
             val signal = "CHANGE_COLOR"  // or "SOUND_ALERT"
@@ -54,6 +76,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        
         // Bluetooth initialization and permission check code (same as before)
         checkPermissions()
 
@@ -115,15 +138,36 @@ class MainActivity : AppCompatActivity() {
     
     // Function to request Bluetooth permissions
     private fun requestBluetoothPermissions() {
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(
-                Manifest.permission.BLUETOOTH_SCAN,
-                Manifest.permission.BLUETOOTH_ADVERTISE,
-                Manifest.permission.BLUETOOTH_CONNECT
-            ),
-            REQUEST_CODE_PERMISSIONS
-        )
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH_SCAN)) {
+            // Show a dialog explaining why the app needs Bluetooth permissions
+            AlertDialog.Builder(this)
+                .setTitle("Bluetooth Permission Required")
+                .setMessage("This app requires Bluetooth permissions to scan and connect to devices.")
+                .setPositiveButton("OK") { _, _ ->
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(
+                            Manifest.permission.BLUETOOTH_SCAN,
+                            Manifest.permission.BLUETOOTH_ADVERTISE,
+                            Manifest.permission.BLUETOOTH_CONNECT
+                        ),
+                        REQUEST_CODE_PERMISSIONS
+                    )
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        } else {
+            // Request the permissions
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.BLUETOOTH_ADVERTISE,
+                    Manifest.permission.BLUETOOTH_CONNECT
+                ),
+                REQUEST_CODE_PERMISSIONS
+            )
+        }
     }
     
     // Callback for permission request result
@@ -135,6 +179,7 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                // If permissions are granted, initialize Bluetooth
                 initializeBluetooth()
             } else {
                 Toast.makeText(this, "Bluetooth permissions are required!", Toast.LENGTH_SHORT).show()
