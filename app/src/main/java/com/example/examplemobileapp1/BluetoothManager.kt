@@ -20,6 +20,28 @@ class BluetoothManager(private val context: Context) {
         manager.adapter
     }
 
+    private val bluetoothLeScanner: BluetoothLeScanner? by lazy {
+        bluetoothAdapter?.bluetoothLeScanner
+    }
+
+    private var bluetoothGatt: BluetoothGatt? = null
+
+    // Add a function to connect to the device
+    fun connectToDevice(device: BluetoothDevice, callback: (Boolean) -> Unit) {
+        bluetoothGatt = device.connectGatt(context, false, object : BluetoothGattCallback() {
+            override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
+                super.onConnectionStateChange(gatt, status, newState)
+                if (newState == BluetoothProfile.STATE_CONNECTED) {
+                    callback(true)
+                } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                    callback(false)
+                }
+            }
+
+            // Handle other GATT callbacks like onServicesDiscovered, etc.
+        })
+    }
+
     private var bluetoothServerSocket: BluetoothServerSocket? = null
     private var bluetoothSocket: BluetoothSocket? = null
 
