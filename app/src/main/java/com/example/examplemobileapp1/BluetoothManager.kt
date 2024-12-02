@@ -263,10 +263,19 @@ class BluetoothManager(private val context: Context) {
         }
     }
 
-    // fun onSignalReceived(signal: String) {
-    //     // Call handleReceivedSignal from MainActivity
-    //     (context as MainActivity).handleReceivedSignal(signal)
-    // } // a method to simulate signal reception:
+    // This method should be called when a signal is received from another device.
+    fun onSignalReceived(signal: String) {
+
+        // Forward the signal to MainActivity to handle UI updates
+        if (signal == "CHANGE_COLOR") {
+            (context as? MainActivity)?.handleReceivedSignal("CHANGE_COLOR")
+        } else if (signal == "SOUND_ALERT") {
+            (context as? MainActivity)?.handleReceivedSignal("SOUND_ALERT")
+        }
+        
+        // Call handleReceivedSignal from MainActivity
+        // (context as MainActivity).handleReceivedSignal(signal)
+    } // a method to simulate signal reception:
 
     // When a device is found during scanning
     // override fun onScanResult(callbackType: Int, result: ScanResult?) {
