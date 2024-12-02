@@ -24,7 +24,8 @@ class MainActivity : AppCompatActivity() {
             // Request to enable Bluetooth
             bluetoothManager.enableBluetooth(this, REQUEST_ENABLE_BLUETOOTH)
         } else {
-            bluetoothManager.startAdvertising()
+            bluetoothManager.startAdvertising()  // Start advertising
+            bluetoothManager.startScanning()  // Start scanning for other BLE devices
             // Initialize Bluetooth
             //bluetoothManager.initializeBluetooth()
         }
@@ -43,12 +44,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_ENABLE_BLUETOOTH) {
-            if (resultCode == Activity.RESULT_OK) {
-                bluetoothManager.initializeBluetooth()
-            } else {
-                Toast.makeText(this, "Bluetooth must be enabled to use this app", Toast.LENGTH_SHORT).show()
-            }
+        if (requestCode == REQUEST_ENABLE_BLUETOOTH && resultCode == Activity.RESULT_OK) {
+            bluetoothManager.startAdvertising()  // Start advertising after Bluetooth is enabled
+            bluetoothManager.startScanning()  // Start scanning after Bluetooth is enabled
         }
     }
     
