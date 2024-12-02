@@ -15,16 +15,22 @@ class MainActivity : AppCompatActivity() {
     
     private lateinit var binding: ActivityMainBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    private var selectedDevice: BluetoothDevice? = null // To store the selected device
+    
+   override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Initialize ViewBinding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        
+
         bluetoothManager = BluetoothManager(this)
 
         // Set up the ListView and Adapter
-        deviceAdapter = DeviceAdapter(this, devices)
+        deviceAdapter = DeviceAdapter(this, devices) { device ->
+            // This is the callback when a device is selected
+            selectedDevice = device
+            connectToDevice(device) // Call the function to connect to the selected device
+        }
         binding.deviceListView.adapter = deviceAdapter
 
         // Set up the button click listener
@@ -36,39 +42,15 @@ class MainActivity : AppCompatActivity() {
                 bluetoothManager.stopScanning()
             }, 10000)  // Stop scanning after 10 seconds
         }
-        
-        // Check if the device supports Bluetooth
-        if (!bluetoothManager.isBluetoothSupported()) {
-            Toast.makeText(this, "Bluetooth is not supported on this device", Toast.LENGTH_LONG).show()
-            finish()
-        } else if (!bluetoothManager.isBluetoothEnabled()) {
-            // Request to enable Bluetooth
-            bluetoothManager.enableBluetooth(this, REQUEST_ENABLE_BLUETOOTH)
-        } else {
-            bluetoothManager.startAdvertising()  // Start advertising
-            bluetoothManager.startScanning()  // Start scanning for other BLE devices
-            // Initialize Bluetooth
-            //bluetoothManager.initializeBluetooth()
-        }
-        
-        // Check permissions at runtime
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (!hasBluetoothPermissions()) {
-                requestBluetoothPermissions()
-            } else {
-                initializeBluetooth()
-            }
-        } else {
-            initializeBluetooth()
-        }
 
-        buttonSendSignal.setOnClickListener {
+        // Bluetooth initialization and permission check code (same as before)
+        checkPermissions()
+
+        // Handle sending signal when button clicked
+        binding.buttonSendSignal.setOnClickListener {
             val signal = "CHANGE_COLOR"  // or "SOUND_ALERT"
             bluetoothManager.sendSignal(signal)  // Send signal to server
         }
-
-        // Initialize Bluetooth (you can call this in onCreate if needed)
-        bluetoothManager.initializeBluetooth()
     }
 
     override fun onStart() {
@@ -127,10 +109,45 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (!hasBluetoothPermissions()) {
+                requestBluetoothPermissions()
+            } else {
+                initializeBluetooth()
+            }
+        } else {
+            initializeBluetooth()
+        }
+    }
     
     // Your Bluetooth initialization logic
     private fun initializeBluetooth() {
         // Start Bluetooth scanning or other functionality here
+    }
+
+    private fun initializeBluetooth() {
+        if (!bluetoothManager.isBluetoothSupported()) {
+            Toast.makeText(this, "Bluetooth is not supported on this device", Toast.LENGTH_LONG).show()
+            finish()
+        } else if (!bluetoothManager.isBluetoothEnabled()) {
+            bluetoothManager.enableBluetooth(this, REQUEST_ENABLE_BLUETOOTH)
+        } else {
+            bluetoothManager.startAdvertising()  // Start advertising
+            bluetoothManager.startScanning()  // Start scanning for other BLE devices
+        }
+    }
+
+    private fun connectToDevice(device: BluetoothDevice) {
+        // Assuming you're using Bluetooth LE with GATT for connections:
+        bluetoothManager.connectToDevice(device) { success ->
+            if (success) {
+                Toast.makeText(this, "Connected to ${device.name}", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Failed to connect to ${device.name}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onStop() {
