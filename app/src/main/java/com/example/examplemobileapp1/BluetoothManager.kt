@@ -262,7 +262,21 @@ class BluetoothManager(private val context: Context) {
             Toast.makeText(context, "Bluetooth is not enabled", Toast.LENGTH_SHORT).show()
         }
     }
-}
+
+    // fun onSignalReceived(signal: String) {
+    //     // Call handleReceivedSignal from MainActivity
+    //     (context as MainActivity).handleReceivedSignal(signal)
+    // } // a method to simulate signal reception:
+
+    // When a device is found during scanning
+    // override fun onScanResult(callbackType: Int, result: ScanResult?) {
+    //     super.onScanResult(callbackType, result)
+    //     result?.device?.let { device ->
+    //         // Here we simulate a signal when a device is found. 
+    //         // This would ideally come from the device you're scanning for.
+    //         (context as MainActivity).handleReceivedSignal("CHANGE_COLOR")
+    //     }
+    // }
     
     fun initializeBluetooth() {
         // Placeholder for any additional Bluetooth initialization logic
