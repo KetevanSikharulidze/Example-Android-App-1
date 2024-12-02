@@ -14,7 +14,7 @@ import java.io.OutputStream
 import java.util.*
 
 class BluetoothManager(private val context: Context) {
-
+    
     private val bluetoothAdapter: BluetoothAdapter? by lazy {
         val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         manager.adapter
@@ -25,7 +25,31 @@ class BluetoothManager(private val context: Context) {
     }
 
     private var bluetoothGatt: BluetoothGatt? = null
+    
+    // connect to a BLE device using GATT
+    val gatt = device.connectGatt(context, false, gattCallback)
 
+    // Define your GATT callback to handle service discovery and notifications
+    val gattCallback = object : BluetoothGattCallback() {
+        override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
+            super.onServicesDiscovered(gatt, status)
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                // Discover characteristics and enable notifications
+                val service = gatt?.getService(UUID.fromString(SERVICE_UUID))
+                val characteristic = service?.getCharacteristic(UUID.fromString(CHARACTERISTIC_UUID))
+                gatt?.setCharacteristicNotification(characteristic, true)
+            }
+        }
+
+         override fun onCharacteristicChanged(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?) {
+            super.onCharacteristicChanged(gatt, characteristic)
+            if (characteristic?.uuid == UUID.fromString(CHARACTERISTIC_UUID)) {
+                val signal = characteristic.getStringValue(0)  // Assuming the signal is a string
+                onSignalReceived(signal)  // Forward the signal to MainActivity
+            }
+        }
+    }
+    
     // Add a function to connect to the device
     fun connectToDevice(device: BluetoothDevice, callback: (Boolean) -> Unit) {
         bluetoothGatt = device.connectGatt(context, false, object : BluetoothGattCallback() {
@@ -286,7 +310,7 @@ class BluetoothManager(private val context: Context) {
     //         (context as MainActivity).handleReceivedSignal("CHANGE_COLOR")
     //     }
     // }
-    
+
     fun initializeBluetooth() {
         // Placeholder for any additional Bluetooth initialization logic
         Toast.makeText(context, "Bluetooth is initialized!", Toast.LENGTH_SHORT).show()
