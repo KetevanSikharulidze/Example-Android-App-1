@@ -1,18 +1,34 @@
-Step-by-Step App Functionality
-Launch the App:
+Overview
 
-Upon opening, the app checks if the device supports Bluetooth.
-Bluetooth Check:
+This app is designed to enhance safety during protests by providing real-time alerts and communication features. It uses Bluetooth technology to create a localized network of users, allowing for rapid information sharing.
 
-If Bluetooth is not enabled, the app prompts the user to enable it using BluetoothAdapter.ACTION_REQUEST_ENABLE.
-If Bluetooth is already enabled, the app moves forward to start advertising and scanning.
-BLE Advertising:
+Key Features:
 
-The app begins broadcasting its signal using BLE advertising. Other nearby devices can pick up this signal, but the app is not required to be directly connected to those devices.
-Scanning for Other Devices:
+Real-time Alerts: Users can send urgent alerts to nearby app users, warning them of potential dangers like police presence, tear gas, or other threats.
+Anonymous Communication: Users can send and receive alerts anonymously, ensuring their privacy.
+Proximity-Based Alerts: Alerts are only sent to users within a specified range, minimizing unnecessary notifications.
+How to Use:
 
-Simultaneously, the app starts scanning for nearby devices that are also advertising.
-If the app detects any other devices, it will show a toast message with their names (this can be expanded to more advanced behavior, like displaying the list of devices in the UI).
-Ongoing Process:
+Install the App: Download and install the app on your Android device.
+Enable Bluetooth: Ensure Bluetooth is enabled on your device.
+Open the App: Launch the app and grant the necessary permissions.
+Send an Alert: Tap the "Send Alert" button to send an urgent message to nearby users.
+Receive Alerts: The app will automatically receive and display alerts from other users in the vicinity.
+Technical Implementation:
 
-The app continues advertising and scanning, and this process can run indefinitely or until you manually stop scanning.
+The app utilizes Android's Bluetooth APIs to:
+
+Discover nearby devices.
+Establish Bluetooth connections.
+Send and receive alerts over the Bluetooth connection.
+Safety Tips:
+
+Stay Informed: Keep your app updated with the latest features and security patches.
+Battery Life: Ensure your device is fully charged before attending a protest.
+Emergency Contacts: Have emergency contacts readily available.
+Be Aware of Your Surroundings: Stay alert and be mindful of your surroundings.
+By using this app, you can help create a safer environment for protesters and contribute to collective safety.
+
+Disclaimer:
+
+While this app aims to enhance safety, it is not a substitute for personal judgment and caution. Always prioritize your safety and take necessary precautions.
