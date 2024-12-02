@@ -62,10 +62,13 @@ class MainActivity : AppCompatActivity() {
             initializeBluetooth()
         }
 
-        button.setOnClickListener {
+        buttonSendSignal.setOnClickListener {
             val signal = "CHANGE_COLOR"  // or "SOUND_ALERT"
             bluetoothManager.sendSignal(signal)  // Send signal to server
         }
+
+        // Initialize Bluetooth (you can call this in onCreate if needed)
+        bluetoothManager.initializeBluetooth()
     }
 
     override fun onStart() {
