@@ -32,16 +32,72 @@ class BluetoothManager(private val context: Context) {
             override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
                 super.onConnectionStateChange(gatt, status, newState)
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
+                    enableNotifications(gatt)
                     callback(true)
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                     callback(false)
                 }
             }
 
-            // Handle other GATT callbacks like onServicesDiscovered, etc.
+            // Handle receiving notifications (signals)
+            override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
+                super.onCharacteristicChanged(gatt, characteristic)
+                val signal = characteristic.getStringValue(0)  // Assuming the signal is a string
+                handleReceivedSignal(signal)
+            }
+
+            // Other GATT callbacks...
         })
     }
 
+    // Send signal (e.g., "CHANGE_COLOR", "SOUND_ALERT") to the connected device
+    fun sendSignal(signal: String) {
+        bluetoothGatt?.let { gatt ->
+            // Here, we would send the signal to the GATT server
+            // You can write the signal to a characteristic, send a notification, etc.
+
+            val characteristic = BluetoothGattCharacteristic(
+                UUID.fromString("your-characteristic-uuid"),
+                BluetoothGattCharacteristic.PROPERTY_WRITE,
+                BluetoothGattCharacteristic.PERMISSION_WRITE
+            )
+            characteristic.setValue(signal)
+            
+            // Write signal to the device
+            gatt.writeCharacteristic(characteristic)
+        }
+    }
+
+    // Enable notifications for a characteristic to listen for signals
+    private fun enableNotifications(gatt: BluetoothGatt) {
+        val service = gatt.getService(UUID.fromString("your-service-uuid"))
+        val characteristic = service.getCharacteristic(UUID.fromString("your-characteristic-uuid"))
+
+        gatt.setCharacteristicNotification(characteristic, true)
+
+        // If the device supports notifications, we enable them
+        val descriptor = characteristic.getDescriptor(UUID.fromString("your-descriptor-uuid"))
+        descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+        gatt.writeDescriptor(descriptor)
+    }
+
+    // Handle the signal that was received from the device
+    private fun handleReceivedSignal(signal: String) {
+        when (signal) {
+            "CHANGE_COLOR" -> {
+                // Perform the action on the device (e.g., change color)
+            }
+            "SOUND_ALERT" -> {
+                // Perform the sound action (e.g., play sound)
+            }
+            else -> {
+                // Handle other signals or invalid signals
+            }
+        }
+    }
+        // Send signal as shown earlier...
+
+    
     private var bluetoothServerSocket: BluetoothServerSocket? = null
     private var bluetoothSocket: BluetoothSocket? = null
 
