@@ -43,6 +43,13 @@ class MainActivity : AppCompatActivity() {
             }, 10000)  // Stop scanning after 10 seconds
         }
 
+        binding.buttonSendSignal.setOnClickListener {
+            val signal = "CHANGE_COLOR"  // or "SOUND_ALERT"
+            selectedDevice?.let { device ->
+                bluetoothManager.sendSignal(signal)
+            }
+        }
+
         // Bluetooth initialization and permission check code (same as before)
         checkPermissions()
 
