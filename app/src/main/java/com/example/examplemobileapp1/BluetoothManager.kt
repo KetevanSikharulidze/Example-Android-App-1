@@ -85,18 +85,32 @@ class BluetoothManager(private val context: Context) {
     private fun handleReceivedSignal(signal: String) {
         when (signal) {
             "CHANGE_COLOR" -> {
-                // Perform the action on the device (e.g., change color)
+                // Change background color to green when "CHANGE_COLOR" signal is received
+                changeBackgroundColor()
             }
             "SOUND_ALERT" -> {
-                // Perform the sound action (e.g., play sound)
+                // Trigger sound alert when the signal is "SOUND_ALERT"
+                playSoundAlert()
             }
             else -> {
-                // Handle other signals or invalid signals
+                 // Handle any unexpected or unknown signals
+                Toast.makeText(context, "Unknown signal: $signal", Toast.LENGTH_SHORT).show()
             }
         }
     }
         // Send signal as shown earlier...
 
+    private fun changeBackgroundColor() {
+        // Change the background color of the activity to green
+        val layout = findViewById<LinearLayout>(R.id.layout_main)
+        layout.setBackgroundColor(Color.GREEN)
+    }
+
+    private fun playSoundAlert() {
+        // Play a siren sound or a notification sound
+        val mediaPlayer = MediaPlayer.create(this, R.raw.siren)  // Assuming you have a siren sound file
+        mediaPlayer.start()
+    }
     
     private var bluetoothServerSocket: BluetoothServerSocket? = null
     private var bluetoothSocket: BluetoothSocket? = null
