@@ -14,6 +14,13 @@
         android:text="Send Signal"
         android:layout_centerInParent="true"/>
 
+    <Button
+        android:id="@+id/stopButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop Siren" 1 
+        android:visibility="gone" />
+
     <!-- Button to start scanning for nearby Bluetooth devices -->
     <Button
         android:id="@+id/startScanButton"
