@@ -10,11 +10,32 @@ class MainActivity : AppCompatActivity() {
     private val REQUEST_ENABLE_BLUETOOTH = 1001
     private val REQUEST_CODE_PERMISSIONS = 1001
 
+    private lateinit var deviceAdapter: DeviceAdapter
+    private val devices = mutableListOf<BluetoothDevice>()
+    
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        // Initialize ViewBinding
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         bluetoothManager = BluetoothManager(this)
+
+        // Set up the ListView and Adapter
+        deviceAdapter = DeviceAdapter(this, devices)
+        binding.deviceListView.adapter = deviceAdapter
+
+        // Set up the button click listener
+        binding.startScanButton.setOnClickListener {
+            bluetoothManager.startScanning()
+
+            // Stop scanning after 10 seconds
+            Handler(Looper.getMainLooper()).postDelayed({
+                bluetoothManager.stopScanning()
+            }, 10000)  // Stop scanning after 10 seconds
+        }
         
         // Check if the device supports Bluetooth
         if (!bluetoothManager.isBluetoothSupported()) {
@@ -40,16 +61,19 @@ class MainActivity : AppCompatActivity() {
         } else {
             initializeBluetooth()
         }
+    }
 
-        
-        // startScanButton.setOnClickListener {
-        //     bluetoothManager.startScanning()
+    override fun onStart() {
+        super.onStart()
 
-        //     // Stop scanning after 10 seconds
-        //     Handler(Looper.getMainLooper()).postDelayed({
-        //         bluetoothManager.stopScanning()
-        //     }, 10000)  // 10 seconds
-        // }
+        // Register scan callback
+        bluetoothManager.setScanCallback(object : BluetoothManager.ScanCallback {
+            override fun onDeviceFound(device: BluetoothDevice) {
+                // Add the found device to the list
+                devices.add(device)
+                deviceAdapter.notifyDataSetChanged() // Update the list view
+            }
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -99,5 +123,10 @@ class MainActivity : AppCompatActivity() {
     // Your Bluetooth initialization logic
     private fun initializeBluetooth() {
         // Start Bluetooth scanning or other functionality here
+    }
+
+    override fun onStop() {
+        super.onStop()
+        bluetoothManager.stopScanning() // Stop scanning when the activity stops
     }
 }
