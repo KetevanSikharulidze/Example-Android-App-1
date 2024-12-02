@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         bluetoothManager = BluetoothManager(this)
+        
         // Check if the device supports Bluetooth
         if (!bluetoothManager.isBluetoothSupported()) {
             Toast.makeText(this, "Bluetooth is not supported on this device", Toast.LENGTH_LONG).show()
@@ -23,8 +24,9 @@ class MainActivity : AppCompatActivity() {
             // Request to enable Bluetooth
             bluetoothManager.enableBluetooth(this, REQUEST_ENABLE_BLUETOOTH)
         } else {
+            bluetoothManager.startAdvertising()
             // Initialize Bluetooth
-            bluetoothManager.initializeBluetooth()
+            //bluetoothManager.initializeBluetooth()
         }
         
         // Check permissions at runtime
