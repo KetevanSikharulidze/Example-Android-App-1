@@ -12,6 +12,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var deviceAdapter: DeviceAdapter
     private val devices = mutableListOf<BluetoothDevice>()
+
+    private var mediaPlayer: MediaPlayer? = null
     
     private lateinit var binding: ActivityMainBinding
 
@@ -38,6 +40,13 @@ class MainActivity : AppCompatActivity() {
             requestBluetoothPermissions()  // Request permissions
         } else {
             initializeBluetooth()  // Proceed if permissions are already granted
+        }
+
+       binding.stopButton.setOnClickListener {
+            mediaPlayer?.stop()
+            mediaPlayer?.release()
+            mediaPlayer = null
+            binding.stopButton.visibility = View.GONE
         }
        
         // Set up the button click listener
