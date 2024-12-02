@@ -43,19 +43,19 @@ class BluetoothManager(private val context: Context) {
                 .addServiceUuid(ParcelUuid.fromString("0000180D-0000-1000-8000-00805F9B34FB")) // Example UUID
                 .setIncludeDeviceName(true)
                 .build()
-
+    
             val settings = AdvertiseSettings.Builder()
-                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
-                .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
-                .setConnectable(false)
+                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY) // Faster, but consumes more battery
+                .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)  // Max range
+                .setConnectable(false)  // Non-connectable to reduce overhead
                 .build()
-
+    
             bluetoothLeAdvertiser?.startAdvertising(settings, advertiseData, object : AdvertiseCallback() {
                 override fun onStartSuccess(settingsInEffect: AdvertiseSettings?) {
                     super.onStartSuccess(settingsInEffect)
                     Toast.makeText(context, "Advertising started!", Toast.LENGTH_SHORT).show()
                 }
-
+    
                 override fun onStartFailure(errorCode: Int) {
                     super.onStartFailure(errorCode)
                     Toast.makeText(context, "Advertising failed with error code: $errorCode", Toast.LENGTH_SHORT).show()
@@ -68,21 +68,27 @@ class BluetoothManager(private val context: Context) {
 
      fun startScanning() {
         if (bluetoothLeScanner != null) {
+            val scanSettings = ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER) // Lower power consumption, but slower
+                .setReportDelay(0) // Report immediately when a device is found
+                .build()
+    
             val scanCallback = object : ScanCallback() {
                 override fun onScanResult(callbackType: Int, result: ScanResult?) {
                     super.onScanResult(callbackType, result)
                     result?.device?.let { device ->
-                        // Handle found device, for example, display device name
+                        // Handle found device, e.g., display device name or signal strength
                         Toast.makeText(context, "Device found: ${device.name}", Toast.LENGTH_SHORT).show()
                     }
                 }
-
+    
                 override fun onScanFailed(errorCode: Int) {
                     super.onScanFailed(errorCode)
                     Toast.makeText(context, "Scan failed with error: $errorCode", Toast.LENGTH_SHORT).show()
                 }
             }
-            bluetoothLeScanner?.startScan(scanCallback)
+    
+            bluetoothLeScanner?.startScan(null, scanSettings, scanCallback)
             Toast.makeText(context, "Scanning for devices...", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(context, "BLE Scanning not supported.", Toast.LENGTH_SHORT).show()
@@ -94,6 +100,8 @@ class BluetoothManager(private val context: Context) {
         bluetoothLeScanner?.stopScan(object : ScanCallback() {})
         Toast.makeText(context, "Scanning stopped", Toast.LENGTH_SHORT).show()
     }
+    
+    
     
     fun initializeBluetooth() {
         // Placeholder for any additional Bluetooth initialization logic
