@@ -127,6 +127,10 @@ class MainActivity : AppCompatActivity() {
         } else {
             initializeBluetooth()
         }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE_STORAGE_PERMISSION)
+        }
     }
     
     // Your Bluetooth initialization logic
