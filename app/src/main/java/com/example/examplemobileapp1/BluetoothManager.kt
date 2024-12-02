@@ -71,20 +71,22 @@ class BluetoothManager(private val context: Context) {
         }.start()
     }
 
-    // Handle the Bluetooth connection (send and receive messages)
-    private fun handleConnection(inputStream: InputStream, outputStream: OutputStream) {
+   private fun handleConnection(inputStream: InputStream, outputStream: OutputStream) {
         val data = ByteArray(1024)
         var bytesRead: Int
-
-        // Continuously listen for incoming data
+    
+        // Continuously listen for incoming data (signals)
         while (true) {
             try {
                 bytesRead = inputStream.read(data)
                 if (bytesRead != -1) {
-                    val message = String(data, 0, bytesRead)
-                    // Do something with the received message (e.g., update UI or handle it)
-                    Handler(Looper.getMainLooper()).post {
-                        Toast.makeText(context, "Received message: $message", Toast.LENGTH_SHORT).show()
+                    val signal = String(data, 0, bytesRead).trim()
+    
+                    // Handle the received signal
+                    when (signal) {
+                        "CHANGE_COLOR" -> changeColor()  // Change screen color to green
+                        "SOUND_ALERT" -> playSound()     // Play sound (e.g., siren)
+                        else -> Log.d("Bluetooth", "Unknown signal: $signal")
                     }
                 }
             } catch (e: IOException) {
@@ -94,11 +96,36 @@ class BluetoothManager(private val context: Context) {
         }
     }
 
+   // Method to change the screen color to green
+    private fun changeColor() {
+        // Update the UI to change the background color to green
+        Handler(Looper.getMainLooper()).post {
+            val activity = context as Activity
+            activity.window.decorView.setBackgroundColor(android.graphics.Color.GREEN)
+        }
+    }
+    
+    // Method to play a siren sound (make sure you have a siren sound file in resources)
+    private fun playSound() {
+        val mediaPlayer = MediaPlayer.create(context, R.raw.siren)  // Example sound file
+        mediaPlayer.start()
+    }
     // Stop listening for incoming connections
     fun stopListening() {
         bluetoothServerSocket?.close()
     }
 
+    // Send signal to the server (e.g., send "CHANGE_COLOR" or "SOUND_ALERT")
+    fun sendSignal(signal: String) {
+        val outputStream = bluetoothSocket?.outputStream
+        try {
+            outputStream?.write(signal.toByteArray())
+            Log.d("Bluetooth", "Signal sent: $signal")
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+    
     // Connect to a Bluetooth server (Client side)
     fun connectToServer(serverAddress: String) {
         val device = bluetoothAdapter?.getRemoteDevice(serverAddress)
