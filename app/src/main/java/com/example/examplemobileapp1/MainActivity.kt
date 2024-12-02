@@ -72,7 +72,28 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
-
+    
+    // React to the received signal (either change color or play sound)
+    private fun handleReceivedSignal(signal: String) {
+        when (signal) {
+            "CHANGE_COLOR" -> {
+                // Change the background color to green (or any color of your choice)
+                binding.root.setBackgroundColor(ContextCompat.getColor(this, R.color.green))
+            }
+            "SOUND_ALERT" -> {
+                // Play the siren sound
+                playSirenSound()
+            }
+        }
+    }
+    // Play the siren sound when the signal is received
+    private fun playSirenSound() {
+        val mediaPlayer = MediaPlayer.create(this, R.raw.siren) // Assuming you have the siren.mp3 in the "res/raw" folder
+        mediaPlayer.start()
+        mediaPlayer.setOnCompletionListener {
+            it.release()  // Release the media player once the sound is finished
+        }
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_ENABLE_BLUETOOTH && resultCode == Activity.RESULT_OK) {
