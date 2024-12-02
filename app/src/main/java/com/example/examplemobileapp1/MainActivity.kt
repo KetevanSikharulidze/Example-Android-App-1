@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         // Initialize ViewBinding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        
         bluetoothManager = BluetoothManager(this)
 
         // Set up the ListView and Adapter
@@ -60,6 +60,11 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             initializeBluetooth()
+        }
+
+        button.setOnClickListener {
+            val signal = "CHANGE_COLOR"  // or "SOUND_ALERT"
+            bluetoothManager.sendSignal(signal)  // Send signal to server
         }
     }
 
