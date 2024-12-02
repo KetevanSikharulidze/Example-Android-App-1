@@ -40,6 +40,16 @@ class MainActivity : AppCompatActivity() {
         } else {
             initializeBluetooth()
         }
+
+        
+        // startScanButton.setOnClickListener {
+        //     bluetoothManager.startScanning()
+
+        //     // Stop scanning after 10 seconds
+        //     Handler(Looper.getMainLooper()).postDelayed({
+        //         bluetoothManager.stopScanning()
+        //     }, 10000)  // 10 seconds
+        // }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
