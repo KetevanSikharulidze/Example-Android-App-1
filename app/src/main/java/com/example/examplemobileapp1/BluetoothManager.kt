@@ -14,6 +14,10 @@ class BluetoothManager(private val context: Context) {
         manager.adapter
     }
 
+    private val bluetoothLeScanner: BluetoothLeScanner? by lazy {
+        bluetoothAdapter?.bluetoothLeScanner
+    }
+    
     private val bluetoothLeAdvertiser: BluetoothLeAdvertiser? by lazy {
         bluetoothAdapter?.bluetoothLeAdvertiser
     }
@@ -61,6 +65,35 @@ class BluetoothManager(private val context: Context) {
             Toast.makeText(context, "BLE Advertising not supported.", Toast.LENGTH_SHORT).show()
         }
     }    
+
+     fun startScanning() {
+        if (bluetoothLeScanner != null) {
+            val scanCallback = object : ScanCallback() {
+                override fun onScanResult(callbackType: Int, result: ScanResult?) {
+                    super.onScanResult(callbackType, result)
+                    result?.device?.let { device ->
+                        // Handle found device, for example, display device name
+                        Toast.makeText(context, "Device found: ${device.name}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onScanFailed(errorCode: Int) {
+                    super.onScanFailed(errorCode)
+                    Toast.makeText(context, "Scan failed with error: $errorCode", Toast.LENGTH_SHORT).show()
+                }
+            }
+            bluetoothLeScanner?.startScan(scanCallback)
+            Toast.makeText(context, "Scanning for devices...", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "BLE Scanning not supported.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Stop scanning for BLE devices
+    fun stopScanning() {
+        bluetoothLeScanner?.stopScan(object : ScanCallback() {})
+        Toast.makeText(context, "Scanning stopped", Toast.LENGTH_SHORT).show()
+    }
     
     fun initializeBluetooth() {
         // Placeholder for any additional Bluetooth initialization logic
