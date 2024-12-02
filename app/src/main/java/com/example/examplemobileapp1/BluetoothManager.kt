@@ -14,6 +14,10 @@ class BluetoothManager(private val context: Context) {
         manager.adapter
     }
 
+    private val bluetoothLeAdvertiser: BluetoothLeAdvertiser? by lazy {
+        bluetoothAdapter?.bluetoothLeAdvertiser
+    }
+
     fun isBluetoothSupported(): Boolean {
         return bluetoothAdapter != null
     }
@@ -29,6 +33,35 @@ class BluetoothManager(private val context: Context) {
         }
     }
 
+    fun startAdvertising() {
+        if (bluetoothLeAdvertiser != null) {
+            val advertiseData = AdvertiseData.Builder()
+                .addServiceUuid(ParcelUuid.fromString("0000180D-0000-1000-8000-00805F9B34FB")) // Example UUID
+                .setIncludeDeviceName(true)
+                .build()
+
+            val settings = AdvertiseSettings.Builder()
+                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
+                .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH)
+                .setConnectable(false)
+                .build()
+
+            bluetoothLeAdvertiser?.startAdvertising(settings, advertiseData, object : AdvertiseCallback() {
+                override fun onStartSuccess(settingsInEffect: AdvertiseSettings?) {
+                    super.onStartSuccess(settingsInEffect)
+                    Toast.makeText(context, "Advertising started!", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onStartFailure(errorCode: Int) {
+                    super.onStartFailure(errorCode)
+                    Toast.makeText(context, "Advertising failed with error code: $errorCode", Toast.LENGTH_SHORT).show()
+                }
+            })
+        } else {
+            Toast.makeText(context, "BLE Advertising not supported.", Toast.LENGTH_SHORT).show()
+        }
+    }    
+    
     fun initializeBluetooth() {
         // Placeholder for any additional Bluetooth initialization logic
         Toast.makeText(context, "Bluetooth is initialized!", Toast.LENGTH_SHORT).show()
